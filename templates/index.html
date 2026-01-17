@@ -11,13 +11,32 @@
         <!-- Header -->
         <header class="header">
             <div class="logo">
-                <span class="logo-icon">🔬</span>
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                        <path d="M11 8v6"/>
+                        <path d="M8 11h6"/>
+                    </svg>
+                </div>
                 <h1>AI Research Agent</h1>
             </div>
             {% if demo_mode %}
-            <span class="demo-badge">Demo Mode</span>
+            <span class="demo-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                Demo Mode
+            </span>
             {% else %}
-            <span class="live-badge">AI Enabled</span>
+            <span class="live-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+                AI Enabled
+            </span>
             {% endif %}
         </header>
 
@@ -29,7 +48,14 @@
                     <textarea id="query" placeholder="What would you like to research? Ask any question..."></textarea>
                     <div class="input-controls">
                         <div class="depth-selector">
-                            <label>Research Depth:</label>
+                            <label>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                    <path d="M2 17l10 5 10-5"/>
+                                    <path d="M2 12l10 5 10-5"/>
+                                </svg>
+                                Research Depth:
+                            </label>
                             <select id="depth">
                                 <option value="quick">Quick (3 sources)</option>
                                 <option value="standard" selected>Standard (5 sources)</option>
@@ -37,6 +63,10 @@
                             </select>
                         </div>
                         <button id="btn-research" class="btn-primary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
                             <span class="btn-text">Start Research</span>
                             <span class="btn-loading" style="display: none;">Researching...</span>
                         </button>
@@ -47,26 +77,54 @@
             <!-- Research Status -->
             <section id="research-status" class="research-status" style="display: none;">
                 <div class="status-header">
-                    <h2>Research in Progress</h2>
+                    <h2>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        Research in Progress
+                    </h2>
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
                     </div>
                 </div>
                 <div class="status-steps">
                     <div class="step" id="step-plan">
-                        <span class="step-icon">📋</span>
+                        <span class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </span>
                         <span class="step-text">Creating research plan...</span>
                     </div>
                     <div class="step" id="step-search">
-                        <span class="step-icon">🔍</span>
+                        <span class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                        </span>
                         <span class="step-text">Searching sources...</span>
                     </div>
                     <div class="step" id="step-analyze">
-                        <span class="step-icon">🧠</span>
+                        <span class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                            </svg>
+                        </span>
                         <span class="step-text">Analyzing findings...</span>
                     </div>
                     <div class="step" id="step-synthesize">
-                        <span class="step-icon">📝</span>
+                        <span class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </span>
                         <span class="step-text">Synthesizing report...</span>
                     </div>
                 </div>
@@ -77,7 +135,15 @@
                 <!-- Research Plan -->
                 <div class="result-section plan-section">
                     <div class="section-header">
-                        <h3>📋 Research Plan</h3>
+                        <h3>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                            Research Plan
+                        </h3>
                         <button class="btn-toggle" data-target="plan-content">▼</button>
                     </div>
                     <div id="plan-content" class="section-content">
@@ -89,7 +155,14 @@
                 <!-- Key Findings -->
                 <div class="result-section findings-section">
                     <div class="section-header">
-                        <h3>💡 Key Findings</h3>
+                        <h3>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 18h6"/>
+                                <path d="M10 22h4"/>
+                                <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/>
+                            </svg>
+                            Key Findings
+                        </h3>
                         <span id="findings-count" class="badge"></span>
                     </div>
                     <div id="findings-content" class="section-content findings-grid"></div>
@@ -98,7 +171,14 @@
                 <!-- Full Report -->
                 <div class="result-section report-section">
                     <div class="section-header">
-                        <h3>📊 Research Report</h3>
+                        <h3>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                            Research Report
+                        </h3>
                     </div>
                     <div id="report-content" class="section-content">
                         <div id="report-summary" class="report-summary"></div>
@@ -119,7 +199,12 @@
 
             <!-- Example Queries -->
             <section class="examples">
-                <h3>Try these research questions:</h3>
+                <h3>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                    Try these research questions:
+                </h3>
                 <div class="example-grid">
                     <button class="example-btn" data-query="What are the latest trends in AI and machine learning for business?">AI in Business</button>
                     <button class="example-btn" data-query="How is remote work changing company culture and productivity?">Remote Work Impact</button>
@@ -131,7 +216,14 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>Autonomous research powered by AI • Multiple source synthesis • Structured insights</p>
+            <p>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+                Autonomous research powered by AI • Multiple source synthesis • Structured insights
+            </p>
         </footer>
     </div>
 
