@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Research Agent</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🔬</span>
+                <h1>AI Research Agent</h1>
+            </div>
+            {% if demo_mode %}
+            <span class="demo-badge">Demo Mode</span>
+            {% else %}
+            <span class="live-badge">AI Enabled</span>
+            {% endif %}
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Research Input -->
+            <section class="research-input">
+                <div class="input-container">
+                    <textarea id="query" placeholder="What would you like to research? Ask any question..."></textarea>
+                    <div class="input-controls">
+                        <div class="depth-selector">
+                            <label>Research Depth:</label>
+                            <select id="depth">
+                                <option value="quick">Quick (3 sources)</option>
+                                <option value="standard" selected>Standard (5 sources)</option>
+                                <option value="deep">Deep (8 sources)</option>
+                            </select>
+                        </div>
+                        <button id="btn-research" class="btn-primary">
+                            <span class="btn-text">Start Research</span>
+                            <span class="btn-loading" style="display: none;">Researching...</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Research Status -->
+            <section id="research-status" class="research-status" style="display: none;">
+                <div class="status-header">
+                    <h2>Research in Progress</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+                <div class="status-steps">
+                    <div class="step" id="step-plan">
+                        <span class="step-icon">📋</span>
+                        <span class="step-text">Creating research plan...</span>
+                    </div>
+                    <div class="step" id="step-search">
+                        <span class="step-icon">🔍</span>
+                        <span class="step-text">Searching sources...</span>
+                    </div>
+                    <div class="step" id="step-analyze">
+                        <span class="step-icon">🧠</span>
+                        <span class="step-text">Analyzing findings...</span>
+                    </div>
+                    <div class="step" id="step-synthesize">
+                        <span class="step-icon">📝</span>
+                        <span class="step-text">Synthesizing report...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results -->
+            <section id="results" class="results" style="display: none;">
+                <!-- Research Plan -->
+                <div class="result-section plan-section">
+                    <div class="section-header">
+                        <h3>📋 Research Plan</h3>
+                        <button class="btn-toggle" data-target="plan-content">▼</button>
+                    </div>
+                    <div id="plan-content" class="section-content">
+                        <div id="plan-objective" class="objective"></div>
+                        <div id="plan-questions" class="questions"></div>
+                    </div>
+                </div>
+
+                <!-- Key Findings -->
+                <div class="result-section findings-section">
+                    <div class="section-header">
+                        <h3>💡 Key Findings</h3>
+                        <span id="findings-count" class="badge"></span>
+                    </div>
+                    <div id="findings-content" class="section-content findings-grid"></div>
+                </div>
+
+                <!-- Full Report -->
+                <div class="result-section report-section">
+                    <div class="section-header">
+                        <h3>📊 Research Report</h3>
+                    </div>
+                    <div id="report-content" class="section-content">
+                        <div id="report-summary" class="report-summary"></div>
+                        <div id="report-insights" class="report-insights"></div>
+                        <div id="report-conclusions" class="report-conclusions"></div>
+                        <div id="report-limitations" class="report-limitations"></div>
+                        <div id="report-recommendations" class="report-recommendations"></div>
+                    </div>
+                </div>
+
+                <!-- Meta Info -->
+                <div class="result-meta">
+                    <span id="meta-sources">Sources: 0</span>
+                    <span id="meta-time">Completed: --</span>
+                    <span id="meta-id">ID: --</span>
+                </div>
+            </section>
+
+            <!-- Example Queries -->
+            <section class="examples">
+                <h3>Try these research questions:</h3>
+                <div class="example-grid">
+                    <button class="example-btn" data-query="What are the latest trends in AI and machine learning for business?">AI in Business</button>
+                    <button class="example-btn" data-query="How is remote work changing company culture and productivity?">Remote Work Impact</button>
+                    <button class="example-btn" data-query="What are the most promising renewable energy technologies?">Renewable Energy</button>
+                    <button class="example-btn" data-query="How are companies using automation to improve efficiency?">Business Automation</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Autonomous research powered by AI • Multiple source synthesis • Structured insights</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const queryInput = document.getElementById('query');
+        const depthSelect = document.getElementById('depth');
+        const btnResearch = document.getElementById('btn-research');
+        const statusSection = document.getElementById('research-status');
+        const resultsSection = document.getElementById('results');
+        const progressFill = document.getElementById('progress-fill');
+
+        // Start research
+        btnResearch.addEventListener('click', startResearch);
+
+        // Example buttons
+        document.querySelectorAll('.example-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                queryInput.value = btn.dataset.query;
+                startResearch();
+            });
+        });
+
+        // Toggle sections
+        document.querySelectorAll('.btn-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = document.getElementById(btn.dataset.target);
+                target.classList.toggle('collapsed');
+                btn.textContent = target.classList.contains('collapsed') ? '▶' : '▼';
+            });
+        });
+
+        async function startResearch() {
+            const query = queryInput.value.trim();
+            if (!query) return;
+
+            const depth = depthSelect.value;
+
+            // Show status, hide results
+            statusSection.style.display = 'block';
+            resultsSection.style.display = 'none';
+
+            // Update button state
+            btnResearch.querySelector('.btn-text').style.display = 'none';
+            btnResearch.querySelector('.btn-loading').style.display = 'inline';
+            btnResearch.disabled = true;
+
+            // Animate progress
+            animateProgress();
+
+            try {
+                const response = await fetch('/api/research', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, depth })
+                });
+
+                const data = await response.json();
+                displayResults(data);
+            } catch (error) {
+                console.error('Research failed:', error);
+                alert('Research failed. Please try again.');
+            } finally {
+                // Reset button
+                btnResearch.querySelector('.btn-text').style.display = 'inline';
+                btnResearch.querySelector('.btn-loading').style.display = 'none';
+                btnResearch.disabled = false;
+                statusSection.style.display = 'none';
+            }
+        }
+
+        function animateProgress() {
+            const steps = ['step-plan', 'step-search', 'step-analyze', 'step-synthesize'];
+            let current = 0;
+
+            const interval = setInterval(() => {
+                if (current > 0) {
+                    document.getElementById(steps[current - 1]).classList.add('complete');
+                }
+                if (current < steps.length) {
+                    document.getElementById(steps[current]).classList.add('active');
+                    progressFill.style.width = ((current + 1) / steps.length * 100) + '%';
+                    current++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 800);
+        }
+
+        function displayResults(data) {
+            resultsSection.style.display = 'block';
+
+            // Research Plan
+            document.getElementById('plan-objective').innerHTML = `
+                <strong>Objective:</strong> ${data.plan.main_objective}
+            `;
+            document.getElementById('plan-questions').innerHTML = `
+                <strong>Sub-questions:</strong>
+                <ul>${data.plan.sub_questions.map(q => `<li>${q}</li>`).join('')}</ul>
+            `;
+
+            // Findings
+            document.getElementById('findings-count').textContent = `${data.findings.length} findings`;
+            document.getElementById('findings-content').innerHTML = data.findings.map(f => `
+                <div class="finding-card">
+                    <span class="confidence confidence-${f.confidence}">${f.confidence}</span>
+                    <p>${f.finding}</p>
+                </div>
+            `).join('');
+
+            // Report
+            const report = data.report;
+            document.getElementById('report-summary').innerHTML = `
+                <h4>Executive Summary</h4>
+                <p>${report.executive_summary}</p>
+            `;
+
+            document.getElementById('report-insights').innerHTML = `
+                <h4>Key Insights</h4>
+                <div class="insights-grid">
+                    ${report.key_insights.map(i => `
+                        <div class="insight-card">
+                            <strong>${i.insight}</strong>
+                            <p>${i.explanation}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            document.getElementById('report-conclusions').innerHTML = `
+                <h4>Conclusions</h4>
+                <ul>${report.conclusions.map(c => `<li>${c}</li>`).join('')}</ul>
+            `;
+
+            document.getElementById('report-limitations').innerHTML = `
+                <h4>Limitations</h4>
+                <ul>${report.limitations.map(l => `<li>${l}</li>`).join('')}</ul>
+            `;
+
+            document.getElementById('report-recommendations').innerHTML = `
+                <h4>Recommendations</h4>
+                <ul>${report.recommendations.map(r => `<li>${r}</li>`).join('')}</ul>
+            `;
+
+            // Meta
+            document.getElementById('meta-sources').textContent = `Sources: ${data.sources_searched}`;
+            document.getElementById('meta-time').textContent = `Completed: ${new Date(data.timestamp).toLocaleTimeString()}`;
+            document.getElementById('meta-id').textContent = `ID: ${data.id}`;
+        }
+    </script>
+</body>
+</html>
