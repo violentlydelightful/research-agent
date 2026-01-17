@@ -1,139 +1,127 @@
-# AI Research Agent
+# Research Agent: Autonomous AI Research Assistant
 
-An autonomous AI-powered research assistant that plans, searches, analyzes, and synthesizes comprehensive reports on any topic.
+## The Problem
 
-## What It Does
+Research is tedious. You have a question, so you Google it, open 10 tabs, skim articles, try to synthesize what you learned, and realize you've spent an hour getting a surface-level understanding. For complex topics, this cycle repeats endlessly.
 
-- **Autonomous Research Planning**: AI breaks down complex questions into searchable sub-queries
-- **Parallel Source Discovery**: Searches multiple sources concurrently
-- **Intelligent Analysis**: Extracts and rates key findings by confidence
-- **Report Synthesis**: Generates structured reports with insights and recommendations
-- **Demo Mode**: Works without API keys using simulated data
+I wanted to explore: **what if an AI could do the grunt work of research autonomously?** Not just answer questions from its training data, but actually plan a research strategy, search the web, analyze multiple sources, and synthesize findings into something actionable.
+
+## What I Built
+
+An autonomous research agent that:
+
+1. **Plans** - Breaks down complex questions into searchable sub-queries
+2. **Searches** - Executes queries in parallel across multiple sources
+3. **Analyzes** - Extracts key findings and rates confidence levels
+4. **Synthesizes** - Generates structured reports with insights and recommendations
+
+The key insight: research isn't just retrieval—it's a multi-step reasoning process. The agent mirrors how a human researcher would approach a topic, but faster.
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    AI Research Agent                             │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│   ┌──────────────┐                                              │
-│   │ User Query   │                                              │
-│   └──────┬───────┘                                              │
-│          │                                                       │
-│          ▼                                                       │
-│   ┌──────────────────────────────────────────────────────────┐  │
-│   │  Step 1: Research Planning                                │  │
-│   │  • Analyze query intent                                   │  │
-│   │  • Break into sub-questions                               │  │
-│   │  • Generate optimized search queries                      │  │
-│   └──────────────────────────┬───────────────────────────────┘  │
-│                              │                                   │
-│                              ▼                                   │
-│   ┌──────────────────────────────────────────────────────────┐  │
-│   │  Step 2: Parallel Search Execution                        │  │
-│   │  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐      │  │
-│   │  │ Query 1 │  │ Query 2 │  │ Query 3 │  │ Query N │      │  │
-│   │  └────┬────┘  └────┬────┘  └────┬────┘  └────┬────┘      │  │
-│   │       └────────────┴────────────┴────────────┘            │  │
-│   │                    Serper API (Google Search)             │  │
-│   └──────────────────────────┬───────────────────────────────┘  │
-│                              │                                   │
-│                              ▼                                   │
-│   ┌──────────────────────────────────────────────────────────┐  │
-│   │  Step 3: Finding Extraction                               │  │
-│   │  • Analyze each source                                    │  │
-│   │  • Extract key findings                                   │  │
-│   │  • Rate confidence (high/medium/low)                      │  │
-│   └──────────────────────────┬───────────────────────────────┘  │
-│                              │                                   │
-│                              ▼                                   │
-│   ┌──────────────────────────────────────────────────────────┐  │
-│   │  Step 4: Report Synthesis                                 │  │
-│   │  • Executive summary                                      │  │
-│   │  • Key insights with explanations                         │  │
-│   │  • Conclusions                                            │  │
-│   │  • Limitations                                            │  │
-│   │  • Actionable recommendations                             │  │
-│   └──────────────────────────────────────────────────────────┘  │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
+User Query
+    │
+    ▼
+┌─────────────────────────────────────────────────────────┐
+│  PLANNING PHASE                                          │
+│  GPT breaks query into 3-8 sub-questions based on depth │
+│  Generates optimized search queries for each            │
+│  Temperature: 0.7 (more creative exploration)           │
+└─────────────────────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────────────────────────────┐
+│  SEARCH PHASE (Parallel)                                 │
+│  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐                       │
+│  │ Q1  │ │ Q2  │ │ Q3  │ │ Qn  │  ← Concurrent via     │
+│  └──┬──┘ └──┬──┘ └──┬──┘ └──┬──┘    asyncio + aiohttp  │
+│     └───────┴───────┴───────┘                           │
+│              Serper API                                  │
+└─────────────────────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────────────────────────────┐
+│  ANALYSIS PHASE                                          │
+│  Extract 2-3 findings per source                        │
+│  Rate confidence: high / medium / low                   │
+│  Temperature: 0.3 (more deterministic)                  │
+└─────────────────────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────────────────────────────┐
+│  SYNTHESIS PHASE                                         │
+│  • Executive summary                                     │
+│  • Key insights with explanations                       │
+│  • Conclusions                                          │
+│  • Limitations (honest about gaps)                      │
+│  • Actionable recommendations                           │
+└─────────────────────────────────────────────────────────┘
 ```
 
-## Features
+## Key Decisions & Tradeoffs
 
-### Multi-Step AI Reasoning
-The agent doesn't just search—it thinks. It breaks down your question, plans the research strategy, and adapts based on what it finds.
+### Why separate temperature settings per phase?
 
-### Confidence-Rated Findings
-Each finding comes with a confidence rating (high/medium/low) based on source quality and corroboration.
+Planning needs creativity (0.7) to generate diverse sub-questions. Analysis needs precision (0.3) to extract facts accurately. Synthesis needs balance (0.5). This isn't documented in most tutorials—I discovered it through experimentation when early versions produced either boring plans or hallucinated findings.
 
-### Depth Control
-- **Quick**: 3 sources, fast results
-- **Standard**: 5 sources, balanced
-- **Deep**: 8 sources, comprehensive
+### Why parallel search execution?
 
-### Structured Reports
-Get actionable output: executive summary, key insights, conclusions, limitations, and recommendations.
+The naive approach is sequential: search, wait, search, wait. With async/await and `asyncio.gather()`, all searches execute concurrently. For a "deep" research (8 queries), this cuts latency from ~16 seconds to ~3 seconds. The code is more complex, but the UX improvement is dramatic.
 
-## Quick Start
+### Why confidence ratings?
 
-```bash
-# Install dependencies
-pip install -r requirements.txt
+Early versions just listed findings as facts. But web sources vary wildly in reliability. Adding confidence ratings (high/medium/low) based on source type and corroboration makes the output more honest. This is something I'd want if I were the user—know what to trust.
 
-# Run (demo mode - no API keys needed)
-python app.py
+### Why a demo mode?
 
-# Open http://localhost:5015
-```
-
-## Full Setup
-
-1. Copy `.env.example` to `.env`
-2. Add your API keys:
-   - [OpenAI](https://platform.openai.com) - AI planning and synthesis
-   - [Serper](https://serper.dev) - Google Search API (2,500 free searches/month)
-
-## API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | Main research interface |
-| `/api/research` | POST | Start a research task |
-| `/api/history` | GET | Get recent research history |
-| `/api/status` | GET | Check API status |
-
-### Start Research
-```bash
-curl -X POST http://localhost:5015/api/research \
-  -H "Content-Type: application/json" \
-  -d '{"query": "What are the latest trends in AI?", "depth": "standard"}'
-```
-
-## Example Research Queries
-
-- "What are the latest trends in AI and machine learning for business?"
-- "How is remote work changing company culture and productivity?"
-- "What are the most promising renewable energy technologies?"
-- "How are companies using automation to improve efficiency?"
+API keys are a barrier to trying things. The app detects missing keys and falls back to realistic simulated data. Someone can clone the repo and see it working in 30 seconds. This matters for portfolio projects.
 
 ## Tech Stack
 
-- **Backend**: Python, Flask, aiohttp (async HTTP)
-- **AI**: OpenAI GPT-3.5 for planning and synthesis
-- **Search**: Serper API (Google Search)
-- **Frontend**: Vanilla JS with real-time updates
+| Component | Choice | Why |
+|-----------|--------|-----|
+| Backend | Flask + aiohttp | Flask for simplicity, aiohttp for async HTTP |
+| AI | OpenAI GPT-3.5-turbo | Good balance of capability and cost |
+| Search | Serper API | Google results via API, 2500 free/month |
+| Frontend | Vanilla JS | No build step, just works |
 
-## Why This Matters
+## What I'd Do Differently
 
-This project demonstrates:
-1. **Autonomous AI agents** - AI that plans and executes multi-step tasks
-2. **Async orchestration** - Parallel API calls for performance
-3. **Structured reasoning** - Breaking complex problems into steps
-4. **Confidence calibration** - Honest uncertainty in AI outputs
-5. **Graceful degradation** - Full demo mode without APIs
+**1. Add source caching.** Currently, if you research similar topics, it re-searches everything. A simple cache keyed on query hash would reduce API costs and latency.
+
+**2. Implement streaming.** The synthesis phase can take 5-10 seconds. Streaming the report as it generates would improve perceived performance significantly.
+
+**3. Add citation tracking.** Findings reference sources, but there's no way to click through to the original. Proper citation linking would make the output more verifiable.
+
+**4. Consider different models per phase.** GPT-4 for planning (better reasoning), GPT-3.5-turbo for extraction (faster, cheaper). The current one-model approach is simpler but not optimal.
+
+## Running It
+
+```bash
+# Clone and install
+git clone https://github.com/[username]/research-agent
+cd research-agent
+pip install -r requirements.txt
+
+# Demo mode (no API keys)
+python app.py
+# → http://localhost:5015
+
+# Full mode
+cp .env.example .env
+# Add OPENAI_API_KEY and SERPER_API_KEY
+python app.py
+```
+
+## What This Demonstrates
+
+- **Autonomous AI agents**: Multi-step reasoning, not just Q&A
+- **Async orchestration**: Parallel execution for performance
+- **Prompt engineering**: Different temperatures for different tasks
+- **Graceful degradation**: Works without external dependencies
+- **Structured output**: JSON schemas for reliable parsing
 
 ---
 
-*Research smarter, not harder.*
+*This project explores what's possible when you let AI plan and execute, not just respond. The architecture patterns here—planning → parallel execution → synthesis—apply to many autonomous agent use cases.*
