@@ -1,5 +1,7 @@
 # Research Agent: Autonomous AI Research Assistant
 
+![Interface Screenshot](screenshots/interface.png)
+
 ## The Problem
 
 Research is tedious. You have a question, so you Google it, open 10 tabs, skim articles, try to synthesize what you learned, and realize you've spent an hour getting a surface-level understanding. For complex topics, this cycle repeats endlessly.
